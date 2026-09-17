@@ -1,0 +1,11 @@
+.env
+.env.*
+*.log
+__pycache__/
+*.pyc
+.DS_Store
+screenshots/
+cloudflared
+service_account_key.json
+.vscode/
+.idea/
