@@ -1,0 +1,39 @@
+{
+  "url": "https://www.tp.com/en-us/",
+  "fingerprint": {
+    "dom_hash": "d9ea375bd42dc9cdc61c8acf49bf192be5720f7c4ee7e63665b10211285776a1",
+    "visual_hash": "7db1a28070b69cd23e8d1fba0fae4e786e4f2aa2af916e4c77c877f12c763281",
+    "updated_at": 1789938482.9999328
+  },
+  "actions": [
+    {
+      "type": "click_coords",
+      "x": 24,
+      "y": 29
+    },
+    {
+      "type": "click_coords",
+      "x": 49,
+      "y": 436
+    },
+    {
+      "type": "click_coords",
+      "x": 103,
+      "y": 301
+    },
+    {
+      "type": "click_coords",
+      "x": 272,
+      "y": 622
+    },
+    {
+      "type": "type_direct",
+      "value": "Customer Service"
+    },
+    {
+      "type": "click_coords",
+      "x": 444,
+      "y": 623
+    }
+  ]
+}

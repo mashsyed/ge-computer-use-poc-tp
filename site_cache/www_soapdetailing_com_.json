@@ -1,0 +1,30 @@
+{
+  "url": "https://www.soapdetailing.com/",
+  "fingerprint": {
+    "dom_hash": "5e406365813a08fd594896886432e63069d7e6173b8767b39f59b47813ee70a1",
+    "visual_hash": "91dce624a159f922a077666bcd66fdd126fbf4661e5f1294115d22a0aadc5f9f",
+    "updated_at": 1789933475.1488183
+  },
+  "actions": [
+    {
+      "type": "click_coords",
+      "x": 746,
+      "y": 50
+    },
+    {
+      "type": "click_coords",
+      "x": 102,
+      "y": 111
+    },
+    {
+      "type": "click_coords",
+      "x": 773,
+      "y": 276
+    },
+    {
+      "type": "click_coords",
+      "x": 479,
+      "y": 531
+    }
+  ]
+}

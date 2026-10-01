@@ -1,0 +1,9 @@
+{
+  "url": "http://localhost:8080/login",
+  "fingerprint": {
+    "dom_hash": "28466805e03f3358ad3706c1422f0c46314014d6650d4dd204073f064940239e",
+    "visual_hash": "d3f80a76759828bdff1ff6a99ce79be4fb003ab8551ac437f1d2ff9a02b4001c",
+    "updated_at": null
+  },
+  "actions": []
+}
