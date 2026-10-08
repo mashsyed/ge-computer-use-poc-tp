@@ -100,20 +100,12 @@ class SheetsSyncClient:
             req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
             with urllib.request.urlopen(req, timeout=15) as response:
                 resp_data = json.loads(response.read().decode("utf-8"))
-                if isinstance(resp_data, list) and len(resp_data) > 0:
+                if isinstance(resp_data, list):
                     return resp_data
         except Exception as e:
             print(f"[SheetsSyncClient] Error fetching ready rows via WebApp: {e}")
             
-        return [{
-            "row_index": 6,
-            "client_id": "CLI-1007",
-            "email": "admin@mashsyed.demo.altostrat.com",
-            "state": "Bogota",
-            "status": "READY_FOR_CRM",
-            "doc_url": "https://drive.google.com",
-            "pdf_drive_id": "1t8zlbnH9Gbd68GG2THK7Q2e__N51QYUJ"
-        }]
+        return []
 
     def update_row_result(self, row_index: int, client_id: str, status: str, case_id: str = "", error_log: str = "", duration_seconds: float = 0.0):
         """Triggers Apps Script WebApp auto-update."""
