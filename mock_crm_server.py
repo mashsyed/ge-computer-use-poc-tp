@@ -134,8 +134,11 @@ class MockCRMHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(LOGIN_HTML.encode("utf-8"))
         elif path == "/customer":
             client_id = query.get("client_id", [""])[0].strip().upper()
+            email = query.get("email", [""])[0].strip()
+            state = query.get("state", [""])[0].strip()
+            name = query.get("name", [""])[0].strip()
             case_id = query.get("created_case_id", [""])[0]
-            self.render_customer(client_id, case_id)
+            self.render_customer(client_id, case_id, email=email, state=state, name=name)
         elif path == "/outbox":
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -163,15 +166,18 @@ class MockCRMHandler(http.server.BaseHTTPRequestHandler):
             body_str = body_data.decode("utf-8", errors="ignore")
             form_params = urllib.parse.parse_qs(body_str)
             client_id = form_params.get("client_id", ["CLI-1005"])[0]
+            email = form_params.get("email", [""])[0]
+            state = form_params.get("state", [""])[0]
+            name = form_params.get("name", [""])[0]
 
-            redirect_url = f"/customer?client_id={urllib.parse.quote(client_id)}&created_case_id={generated_case_id}"
+            redirect_url = f"/customer?client_id={urllib.parse.quote(client_id)}&created_case_id={generated_case_id}&email={urllib.parse.quote(email)}&state={urllib.parse.quote(state)}&name={urllib.parse.quote(name)}"
             self.send_response(302)
             self.send_header("Location", redirect_url)
             self.end_headers()
         else:
             self.send_error(404)
 
-    def render_customer(self, client_id, created_case_id=""):
+    def render_customer(self, client_id, created_case_id="", email="", state="", name=""):
         case_banner_html = ""
         if created_case_id:
             case_banner_html = f"""
@@ -180,14 +186,23 @@ class MockCRMHandler(http.server.BaseHTTPRequestHandler):
                 <div>Generated Case ID: <div class="case-id-highlight" id="generated-case-id">{created_case_id}</div></div>
             </div>"""
 
-        client = MOCK_CLIENTS.get(client_id, {
-            "client_id": client_id or "CLI-1005",
-            "name": f"Client {client_id} Corp",
-            "email": "mashsyed@google.com",
-            "state": "Bogotá",
-            "loan_balance": "$45,000.00",
-            "standing": "GOOD_STANDING"
-        })
+        # Dynamic client profile resolution
+        if client_id in MOCK_CLIENTS:
+            client = MOCK_CLIENTS[client_id].copy()
+            if email: client["email"] = email
+            if state: client["state"] = state
+            if name: client["name"] = name
+        else:
+            client = {
+                "client_id": client_id or "CLI-1005",
+                "name": name or (f"Client {client_id} Corp" if client_id else "Sample Enterprise"),
+                "email": email or "admin@mashsyed.demo.altostrat.com",
+                "state": state or "California",
+                "loan_balance": "$45,000.00",
+                "standing": "GOOD_STANDING"
+            }
+            if client_id:
+                MOCK_CLIENTS[client_id] = client
 
         client_details_html = f"""
         <div class="card">
@@ -204,6 +219,9 @@ class MockCRMHandler(http.server.BaseHTTPRequestHandler):
             <h2>Create New Tax Certificate Case</h2>
             <form method="POST" action="/customer/create-case">
                 <input type="hidden" name="client_id" value="{client['client_id']}">
+                <input type="hidden" name="email" value="{client['email']}">
+                <input type="hidden" name="state" value="{client['state']}">
+                <input type="hidden" name="name" value="{client['name']}">
                 <button type="submit" id="btn-submit-case" class="btn-create">Submit Case & Dispatch Email</button>
             </form>
         </div>"""

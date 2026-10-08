@@ -179,7 +179,7 @@ def prune_historical_screenshots(contents: List[Content]) -> List[Content]:
     return contents
 
 
-async def execute_deterministic_playwright_steps(page: Page, client_id: str, cost_tracker: RunCostTracker) -> bool:
+async def execute_deterministic_playwright_steps(page: Page, client_id: str, cost_tracker: RunCostTracker, email: str = "", state: str = "") -> bool:
     """⚡ Hybrid Playwright Execution: Performs deterministic DOM form actions directly.
     
     Bypasses token costs for fixed UI steps (Login, Search, Form Submission)
@@ -195,15 +195,12 @@ async def execute_deterministic_playwright_steps(page: Page, client_id: str, cos
             cost_tracker.record_dom_action("Login Form Fill", "User/Pass Fill & Sign In")
             await page.wait_for_timeout(800)
 
-        # Step 2: Search Client
-        search_input = await page.query_selector('#client-search-input, input[placeholder*="Client ID"]')
-        if search_input:
-            await search_input.fill(client_id)
-            search_btn = await page.query_selector('button:has-text("Search Client")')
-            if search_btn:
-                await search_btn.click()
-                cost_tracker.record_dom_action("Search Client", f"Input ID: {client_id}")
-                await page.wait_for_timeout(800)
+        # Step 2: Navigate directly to Client Profile with Sheet row data
+        customer_url = f"{LOCAL_CRM_URL}/customer?client_id={urllib.parse.quote(client_id)}&email={urllib.parse.quote(email)}&state={urllib.parse.quote(state)}"
+        print(f"👤 Loading Client Profile in Mock CRM: {customer_url}")
+        await page.goto(customer_url)
+        cost_tracker.record_dom_action("Load Client Record", f"ID: {client_id}, Email: {email}, State: {state}")
+        await page.wait_for_timeout(800)
 
         # Step 3: Submit Case
         submit_btn = await page.query_selector('button:has-text("Submit Case & Dispatch Email")')
@@ -332,7 +329,7 @@ Inspect the current browser page:
         await page.wait_for_timeout(500)
 
         # ⚡ Step 1: Execute Direct Playwright Deterministic Hybrid Actions
-        await execute_deterministic_playwright_steps(page, client_id, cost_tracker)
+        await execute_deterministic_playwright_steps(page, client_id, cost_tracker, email=email, state=state)
 
         # Step 2: Configure Gemini 3.8 Flash with Computer Use & ThinkingConfig
         config_with_thinking = GenerateContentConfig(
